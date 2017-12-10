@@ -1,0 +1,7 @@
+[package]
+name = "system-programing-rs"
+version = "0.1.0"
+authors = ["Yuki <yuki.mul.tiplus@gmail.com>"]
+
+[dependencies]
+nix = "0.9.0"
