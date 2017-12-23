@@ -1,11 +1,12 @@
 extern crate nix;
 
+use std::env;
 use std::ffi::CString;
 use nix::sys::wait::*;
 use nix::unistd::*;
 
 fn main() {
-    match fork().expect("fork(2) failed") {
+    match fork().expect("fork failed") {
         ForkResult::Parent { child } => {
             match waitpid(child, None).expect("wait_pid failed") {
                 WaitStatus::Exited(pid, status) => {
@@ -18,11 +19,15 @@ fn main() {
             }
         }
         ForkResult::Child => {
+            let args: Vec<String> = env::args().collect();
+            let dir = CString::new(args[1].to_string()).unwrap();
+            let arg = CString::new(args[2].to_string()).unwrap();
+
             execv(
-                &CString::new("/bin/echo").unwrap(),
+                &dir,
                 &[
-                    CString::new("/bin/echo").unwrap(),
-                    CString::new("OK").unwrap(),
+                    dir.clone(),
+                    arg,
                 ],
             ).expect("execution failed.");
         }
